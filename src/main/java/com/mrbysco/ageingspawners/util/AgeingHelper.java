@@ -18,24 +18,34 @@ public class AgeingHelper {
 
 	public static boolean whitelistContains(ResourceLocation registryName) {
 		String[] whitelist = SpawnerConfig.whitelist.whitelist;
-		List<ResourceLocation> blacklistList = new ArrayList<>();
+		List<ResourceLocation> whitelistList = new ArrayList<>();
 		for(int i = 0; i < whitelist.length; i++) {
-			String[] info = whitelist[i].split(";");
-			if(info.length > 1) {
-				blacklistList.add(new ResourceLocation(info[0]));
+			String info = whitelist[i];
+
+			if(info.contains(";")) {
+				String[] infoArray = info.split(";");
+				if(infoArray.length > 1) {
+					whitelistList.add(new ResourceLocation(infoArray[0]));
+				}
+			} else {
+				whitelistList.add(new ResourceLocation(info));
 			}
 		}
-		return blacklistList.contains(registryName);
+		return whitelistList.contains(registryName);
 	}
 
 	public static int getMaxSpawnCount(ResourceLocation registryName) {
 		String[] whitelist = SpawnerConfig.whitelist.whitelist;
 		for(int i = 0; i < whitelist.length; i++) {
-			String[] info = whitelist[i].split(";");
-			if(info.length > 1 && new ResourceLocation(info[0]).equals(registryName)) {
-				return Integer.valueOf(info[1]);
+			String info = whitelist[i];
+
+			if(info.contains(";")) {
+				String[] infoArray = info.split(";");
+				if(infoArray.length > 1 && new ResourceLocation(infoArray[0]).equals(registryName)) {
+					return Integer.valueOf(infoArray[1]);
+				}
 			}
 		}
-		return 0;
+		return SpawnerConfig.whitelist.maxSpawnCount;
 	}
 }

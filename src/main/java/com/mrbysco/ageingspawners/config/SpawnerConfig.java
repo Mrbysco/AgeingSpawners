@@ -31,19 +31,23 @@ public class SpawnerConfig {
 	}
 
 	public static class Whitelist{
+		@Config.Comment("Decides default amount of spawns a spawner can have in WHITELIST mode unless specified [Default: 20]")
+		@Config.Name("Max Spawn Count")
+		public int maxSpawnCount = 20;
+
 		@Config.Comment("Decides which mobs age a spawner (requires spawnerMode to be set to WHITELIST) \n" +
-				"[syntax: 'modid:entity;times' ]" +
-				"[example: 'minecraft:pig|3' ]")
+				"[syntax: 'modid:entity;times' or 'modid:entity' ] \n" +
+				"[example: 'minecraft:pig|5' ]")
 		@Config.Name("Whitelist")
 		public String[] whitelist = new String[]{};
 	}
 
 	public static class Blacklist{
-		@Config.Comment("Decides the amount of spawns a spawner can have in BLACKLIST mode [syntax: modid:entity]")
+		@Config.Comment("Decides the amount of spawns a spawner can have in BLACKLIST mode [Default: 20]")
 		@Config.Name("Max Spawn Count")
 		public int maxSpawnCount = 20;
 
-		@Config.Comment("Decides which mobs don't age a spawner (requires spawnerMode to be set to BLACKLIST) [syntax: modid:entity]")
+		@Config.Comment("Decides which mobs don't age a spawner (requires spawnerMode to be set to BLACKLIST) [syntax: 'modid:entity']")
 		@Config.Name("Blacklist")
 		public String[] blacklist = new String[]{};
 	}
