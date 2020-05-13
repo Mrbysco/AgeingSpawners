@@ -8,19 +8,19 @@ import java.util.List;
 
 public class AgeingHelper {
 	public static boolean blacklistContains(ResourceLocation registryName) {
-		String[] blacklist = SpawnerConfig.blacklist.blacklist;
+		List<? extends String> blacklist = SpawnerConfig.SERVER.blacklist.get();
 		List<ResourceLocation> blacklistList = new ArrayList<>();
-		for(int i = 0; i < blacklist.length; i++) {
-			blacklistList.add(new ResourceLocation(blacklist[i]));
+		for(int i = 0; i < blacklist.size(); i++) {
+			blacklistList.add(new ResourceLocation(blacklist.get(i)));
 		}
 		return blacklistList.contains(registryName);
 	}
 
 	public static boolean whitelistContains(ResourceLocation registryName) {
-		String[] whitelist = SpawnerConfig.whitelist.whitelist;
+		List<? extends String> whitelist = SpawnerConfig.SERVER.whitelist.get();
 		List<ResourceLocation> whitelistList = new ArrayList<>();
-		for(int i = 0; i < whitelist.length; i++) {
-			String info = whitelist[i];
+		for(int i = 0; i < whitelist.size(); i++) {
+			String info = whitelist.get(i);
 
 			if(info.contains(";")) {
 				String[] infoArray = info.split(";");
@@ -35,9 +35,9 @@ public class AgeingHelper {
 	}
 
 	public static int getMaxSpawnCount(ResourceLocation registryName) {
-		String[] whitelist = SpawnerConfig.whitelist.whitelist;
-		for(int i = 0; i < whitelist.length; i++) {
-			String info = whitelist[i];
+		List<? extends String> whitelist = SpawnerConfig.SERVER.whitelist.get();
+		for(int i = 0; i < whitelist.size(); i++) {
+			String info = whitelist.get(i);
 
 			if(info.contains(";")) {
 				String[] infoArray = info.split(";");
@@ -46,6 +46,6 @@ public class AgeingHelper {
 				}
 			}
 		}
-		return SpawnerConfig.whitelist.maxSpawnCount;
+		return SpawnerConfig.SERVER.whitelistMaxSpawnCount.get();
 	}
 }

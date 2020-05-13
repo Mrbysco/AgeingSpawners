@@ -1,65 +1,88 @@
 package com.mrbysco.ageingspawners.config;
 
-import com.mrbysco.ageingspawners.Reference;
-import net.minecraftforge.common.config.Config;
-import net.minecraftforge.common.config.ConfigManager;
-import net.minecraftforge.fml.client.event.ConfigChangedEvent;
-import net.minecraftforge.fml.common.Mod;
-import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
+import com.mrbysco.ageingspawners.AgeingSpawners;
+import net.minecraftforge.common.ForgeConfigSpec;
+import net.minecraftforge.common.ForgeConfigSpec.ConfigValue;
+import net.minecraftforge.common.ForgeConfigSpec.EnumValue;
+import net.minecraftforge.common.ForgeConfigSpec.IntValue;
+import net.minecraftforge.eventbus.api.SubscribeEvent;
+import net.minecraftforge.fml.config.ModConfig;
+import org.apache.commons.lang3.tuple.Pair;
 
-@Config(modid = Reference.MOD_ID)
-@Config.LangKey("ageingspawners.config.title")
+import java.util.ArrayList;
+import java.util.List;
+
 public class SpawnerConfig {
-
-	@Config.Comment({"General settings"})
-	public static General general = new General();
-
-	@Config.Comment({"Whitelist settings"})
-	public static Whitelist whitelist = new Whitelist();
-
-	@Config.Comment({"Blacklist settings"})
-	public static Blacklist blacklist = new Blacklist();
-
 	public enum EnumAgeingMode {
 		BLACKLIST,
 		WHITELIST
 	}
 
-	public static class General{
-		@Config.Comment("Decides whether the spawner is on blacklist or whitelist-only mode [Default: WHITELIST]")
-		public EnumAgeingMode spawnerMode = EnumAgeingMode.WHITELIST;
-	}
+	public static class Server {
+		public final EnumValue<EnumAgeingMode> spawnerMode;
 
-	public static class Whitelist{
-		@Config.Comment("Decides default amount of spawns a spawner can have in WHITELIST mode unless specified [Default: 20]")
-		@Config.Name("Max Spawn Count")
-		public int maxSpawnCount = 20;
+		public final IntValue whitelistMaxSpawnCount;
+		public final ConfigValue<List<? extends String>> whitelist;
 
-		@Config.Comment("Decides which mobs age a spawner (requires spawnerMode to be set to WHITELIST) \n" +
-				"[syntax: 'modid:entity;times' or 'modid:entity' ] \n" +
-				"[example: 'minecraft:pig;5' ]")
-		@Config.Name("Whitelist")
-		public String[] whitelist = new String[]{};
-	}
+		public final IntValue blacklistMaxSpawnCount;
+		public final ConfigValue<List<? extends String>> blacklist;
 
-	public static class Blacklist{
-		@Config.Comment("Decides the amount of spawns a spawner can have in BLACKLIST mode [Default: 20]")
-		@Config.Name("Max Spawn Count")
-		public int maxSpawnCount = 20;
 
-		@Config.Comment("Decides which mobs don't age a spawner (requires spawnerMode to be set to BLACKLIST) [syntax: 'modid:entity']")
-		@Config.Name("Blacklist")
-		public String[] blacklist = new String[]{};
-	}
+		Server(ForgeConfigSpec.Builder builder) {
+			builder.comment("General settings")
+					.push("General");
 
-	@Mod.EventBusSubscriber(modid = Reference.MOD_ID)
-	private static class EventHandler {
+			spawnerMode = builder
+					.comment("Decides whether the spawner is on blacklist or whitelist-only mode [Default: WHITELIST]")
+					.defineEnum("spawnerMode", EnumAgeingMode.WHITELIST);
 
-		@SubscribeEvent
-		public static void onConfigChanged(final ConfigChangedEvent.OnConfigChangedEvent event) {
-			if (event.getModID().equals(Reference.MOD_ID)) {
-				ConfigManager.sync(Reference.MOD_ID, Config.Type.INSTANCE);
-			}
+			builder.pop();
+			builder.comment("Whitelist settings")
+					.push("Whitelist");
+
+			whitelistMaxSpawnCount = builder
+					.comment("Decides default amount of spawns a spawner can have in WHITELIST mode unless specified [Default: 20]")
+					.defineInRange("whitelistMaxSpawnCount", 20, 1, Integer.MAX_VALUE);
+
+			whitelist = builder
+					.comment("Decides which mobs age a spawner (requires spawnerMode to be set to WHITELIST) \n" +
+							"[syntax: 'modid:entity;times' or 'modid:entity' ] \n" +
+							"[example: 'minecraft:pig;5' ]")
+					.defineList("whitelist", new ArrayList<>(), o -> (o instanceof String));
+
+			builder.pop();
+			builder.comment("Blacklist settings")
+					.push("Blacklist");
+
+			blacklistMaxSpawnCount = builder
+					.comment("Decides the amount of spawns a spawner can have in BLACKLIST mode [Default: 20]")
+					.defineInRange("blacklistMaxSpawnCount", 20, 1, Integer.MAX_VALUE);
+
+			blacklist = builder
+					.comment("Decides which mobs don't age a spawner (requires spawnerMode to be set to BLACKLIST) \n" +
+							"[syntax: 'modid:entity']")
+					.defineList("blacklist", new ArrayList<>(), o -> (o instanceof String));
+
+			builder.pop();
 		}
+	}
+
+	public static final ForgeConfigSpec serverSpec;
+	public static final SpawnerConfig.Server SERVER;
+
+	static {
+		final Pair<Server, ForgeConfigSpec> specPair = new ForgeConfigSpec.Builder().configure(SpawnerConfig.Server::new);
+		serverSpec = specPair.getRight();
+		SERVER = specPair.getLeft();
+	}
+
+	@SubscribeEvent
+	public static void onLoad(final ModConfig.Loading configEvent) {
+		AgeingSpawners.logger.debug("Loaded Ageing Spawners' config file {}", configEvent.getConfig().getFileName());
+	}
+
+	@SubscribeEvent
+	public static void onFileChange(final ModConfig.ModConfigEvent configEvent) {
+		AgeingSpawners.logger.debug("Ageing Spawners' config just got changed on the file system!");
 	}
 }

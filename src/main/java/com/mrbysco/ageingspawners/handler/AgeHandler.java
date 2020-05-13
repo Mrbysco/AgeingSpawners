@@ -1,26 +1,30 @@
 package com.mrbysco.ageingspawners.handler;
 
+import com.mrbysco.ageingspawners.AgeingSpawners;
 import com.mrbysco.ageingspawners.config.SpawnerConfig;
 import com.mrbysco.ageingspawners.util.AgeingHelper;
-import net.minecraft.entity.EntityList;
-import net.minecraft.init.Blocks;
-import net.minecraft.tileentity.MobSpawnerBaseLogic;
-import net.minecraft.tileentity.TileEntityMobSpawner;
+import net.minecraft.block.Blocks;
+import net.minecraft.entity.SpawnReason;
+import net.minecraft.tileentity.MobSpawnerTileEntity;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.world.World;
+import net.minecraft.world.IWorld;
+import net.minecraft.world.spawner.AbstractSpawner;
 import net.minecraftforge.event.entity.living.LivingSpawnEvent;
 import net.minecraftforge.event.world.BlockEvent.BreakEvent;
-import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
+import net.minecraftforge.eventbus.api.SubscribeEvent;
 
 import java.util.HashMap;
 
 public class AgeHandler {
+
 	@SubscribeEvent
 	public void SpawnEvent(LivingSpawnEvent.SpecialSpawn event) {
-		if (!event.getWorld().isRemote && event.getSpawner() != null) {
-			ResourceLocation registryName = EntityList.getKey(event.getEntityLiving());
-			switch (SpawnerConfig.general.spawnerMode) {
+		AgeingSpawners.logger.info(event.getSpawnReason());
+		AgeingSpawners.logger.info(event.getEntityLiving().getType().getRegistryName());
+		if (!event.getWorld().isRemote() && event.getSpawnReason().equals(SpawnReason.SPAWNER)) {
+			ResourceLocation registryName = event.getEntityLiving().getType().getRegistryName();
+			switch (SpawnerConfig.SERVER.spawnerMode.get()) {
 				case BLACKLIST:
 					handleBlacklist(event, registryName);
 					break;
@@ -34,11 +38,11 @@ public class AgeHandler {
 	public static HashMap<BlockPos, Integer> spawnerMap = new HashMap<>();
 
 	public void handleBlacklist(LivingSpawnEvent.SpecialSpawn event, ResourceLocation registryName) {
-		MobSpawnerBaseLogic spawnerLogic = event.getSpawner();
+		AbstractSpawner spawner = event.getSpawner();
 		if(!AgeingHelper.blacklistContains(registryName)) {
-			this.ageTheSpawner(event, SpawnerConfig.blacklist.maxSpawnCount);
+			this.ageTheSpawner(event, SpawnerConfig.SERVER.blacklistMaxSpawnCount.get());
 		} else {
-			BlockPos pos = spawnerLogic.getSpawnerPosition();
+			BlockPos pos = spawner.getSpawnerPosition();
 			if(spawnerMap.containsKey(pos)) {
 				spawnerMap.remove(pos);
 			}
@@ -46,12 +50,14 @@ public class AgeHandler {
 	}
 
 	public void handleWhitelist(LivingSpawnEvent.SpecialSpawn event, ResourceLocation registryName) {
-		MobSpawnerBaseLogic spawnerLogic = event.getSpawner();
+		AbstractSpawner spawner = event.getSpawner();
+		System.out.println("Testing for: " + registryName);
 		if(AgeingHelper.whitelistContains(registryName)) {
+			System.out.println(registryName + " is found");
 			int maxSpawnCount = AgeingHelper.getMaxSpawnCount(registryName);
 			this.ageTheSpawner(event, maxSpawnCount);
 		} else {
-			BlockPos pos = spawnerLogic.getSpawnerPosition();
+			BlockPos pos = spawner.getSpawnerPosition();
 			if(spawnerMap.containsKey(pos)) {
 				spawnerMap.remove(pos);
 			}
@@ -59,14 +65,14 @@ public class AgeHandler {
 	}
 
 	public void ageTheSpawner(LivingSpawnEvent.SpecialSpawn event, int maxCount) {
-		MobSpawnerBaseLogic spawnerLogic = event.getSpawner();
-		World world = event.getWorld();
-		BlockPos spawnerPos = spawnerLogic.getSpawnerPosition();
-		if(world.getTileEntity(spawnerPos) != null && world.getTileEntity(spawnerPos) instanceof TileEntityMobSpawner) {
+		AbstractSpawner spawner = event.getSpawner();
+		IWorld world = event.getWorld();
+		BlockPos spawnerPos = spawner.getSpawnerPosition();
+		if(world.getTileEntity(spawnerPos) != null && world.getTileEntity(spawnerPos) instanceof MobSpawnerTileEntity) {
 			int spawnCount = spawnerMap.containsKey(spawnerPos) ? spawnerMap.get(spawnerPos) : 0;
 			spawnCount++;
 			if(spawnCount >= maxCount) {
-				world.setBlockState(spawnerPos, Blocks.AIR.getDefaultState());
+				world.setBlockState(spawnerPos, Blocks.AIR.getDefaultState(), 3);
 				spawnerMap.remove(spawnerPos);
 			} else {
 				spawnerMap.put(spawnerPos, Integer.valueOf(spawnCount));
@@ -76,7 +82,7 @@ public class AgeHandler {
 
 	@SubscribeEvent
 	public void breakEvent(BreakEvent event) {
-		if(!event.getWorld().isRemote) {
+		if(!event.getWorld().isRemote()) {
 			BlockPos pos = event.getPos();
 			if(!spawnerMap.isEmpty() && spawnerMap.containsKey(pos)) {
 				spawnerMap.remove(pos);
