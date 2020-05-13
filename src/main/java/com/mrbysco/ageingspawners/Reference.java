@@ -8,8 +8,6 @@ public class Reference {
 	public static final String ACCEPTED_VERSIONS = "[1.12]";
 	public static final String DEPENDENCIES = ";";
 
-	public static final String SPAWN_COUNT_TAG = MOD_ID + ".spawnCount";
-
 	public static final String CLIENT_PROXY_CLASS = "com.mrbysco.ageingspawners.proxy.ClientProxy";
 	public static final String SERVER_PROXY_CLASS = "com.mrbysco.ageingspawners.proxy.ServerProxy";
 }

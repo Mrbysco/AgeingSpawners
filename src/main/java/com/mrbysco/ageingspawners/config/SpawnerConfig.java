@@ -37,7 +37,7 @@ public class SpawnerConfig {
 
 		@Config.Comment("Decides which mobs age a spawner (requires spawnerMode to be set to WHITELIST) \n" +
 				"[syntax: 'modid:entity;times' or 'modid:entity' ] \n" +
-				"[example: 'minecraft:pig|5' ]")
+				"[example: 'minecraft:pig;5' ]")
 		@Config.Name("Whitelist")
 		public String[] whitelist = new String[]{};
 	}
