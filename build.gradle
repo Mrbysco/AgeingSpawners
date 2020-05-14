@@ -19,7 +19,7 @@ archivesBaseName = "AgeingSpawners-${mc_version}"
 sourceCompatibility = targetCompatibility = compileJava.sourceCompatibility = compileJava.targetCompatibility = '1.8' // Need this here so eclipse task generates correctly.
 
 minecraft {
-    mappings  channel: "${mcp_channel}", version: "${mcp_mappings}-${mc_version}"
+    mappings  channel: "${mcp_channel}", version: "${mcp_mappings}"
 	
     runs {
         client {

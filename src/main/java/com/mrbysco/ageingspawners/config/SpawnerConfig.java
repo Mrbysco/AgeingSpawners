@@ -82,7 +82,7 @@ public class SpawnerConfig {
 	}
 
 	@SubscribeEvent
-	public static void onFileChange(final ModConfig.ModConfigEvent configEvent) {
+	public static void onFileChange(final ModConfig.Reloading configEvent) {
 		AgeingSpawners.logger.debug("Ageing Spawners' config just got changed on the file system!");
 	}
 }
