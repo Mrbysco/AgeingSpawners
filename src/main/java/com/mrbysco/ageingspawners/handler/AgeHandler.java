@@ -19,10 +19,8 @@ import java.util.HashMap;
 public class AgeHandler {
 
 	@SubscribeEvent
-	public void SpawnEvent(LivingSpawnEvent.SpecialSpawn event) {
-		AgeingSpawners.logger.info(event.getSpawnReason());
-		AgeingSpawners.logger.info(event.getEntityLiving().getType().getRegistryName());
-		if (!event.getWorld().isRemote() && event.getSpawnReason().equals(SpawnReason.SPAWNER)) {
+	public void SpawnEvent(LivingSpawnEvent.CheckSpawn event) {
+		if (!event.getWorld().isRemote() && event.isSpawner()) {
 			ResourceLocation registryName = event.getEntityLiving().getType().getRegistryName();
 			switch (SpawnerConfig.SERVER.spawnerMode.get()) {
 				case BLACKLIST:
@@ -37,7 +35,7 @@ public class AgeHandler {
 
 	public static HashMap<BlockPos, Integer> spawnerMap = new HashMap<>();
 
-	public void handleBlacklist(LivingSpawnEvent.SpecialSpawn event, ResourceLocation registryName) {
+	public void handleBlacklist(LivingSpawnEvent.CheckSpawn event, ResourceLocation registryName) {
 		AbstractSpawner spawner = event.getSpawner();
 		if(!AgeingHelper.blacklistContains(registryName)) {
 			this.ageTheSpawner(event, SpawnerConfig.SERVER.blacklistMaxSpawnCount.get());
@@ -49,11 +47,9 @@ public class AgeHandler {
 		}
 	}
 
-	public void handleWhitelist(LivingSpawnEvent.SpecialSpawn event, ResourceLocation registryName) {
+	public void handleWhitelist(LivingSpawnEvent.CheckSpawn event, ResourceLocation registryName) {
 		AbstractSpawner spawner = event.getSpawner();
-		System.out.println("Testing for: " + registryName);
 		if(AgeingHelper.whitelistContains(registryName)) {
-			System.out.println(registryName + " is found");
 			int maxSpawnCount = AgeingHelper.getMaxSpawnCount(registryName);
 			this.ageTheSpawner(event, maxSpawnCount);
 		} else {
@@ -64,7 +60,7 @@ public class AgeHandler {
 		}
 	}
 
-	public void ageTheSpawner(LivingSpawnEvent.SpecialSpawn event, int maxCount) {
+	public void ageTheSpawner(LivingSpawnEvent.CheckSpawn event, int maxCount) {
 		AbstractSpawner spawner = event.getSpawner();
 		IWorld world = event.getWorld();
 		BlockPos spawnerPos = spawner.getSpawnerPosition();
