@@ -1,12 +1,12 @@
 modLoader="javafml"
-loaderVersion="[28,)"
+loaderVersion="[31,)"
 issueTrackerURL="https://github.com/Mrbysco/AgeingSpawners"
 
 [[mods]]
 modId="ageingspawners"
 version="${file.jarVersion}"
 displayName="Ageing Spawners"
-#displayURL=""
+displayURL="https://www.curseforge.com/minecraft/mc-mods/ageing-spawners"
 authors="Mrbysco, ShyNieke"
 description='''
 Spawners that have a limit
