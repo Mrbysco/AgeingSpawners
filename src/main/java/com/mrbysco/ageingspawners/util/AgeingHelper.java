@@ -1,51 +1,49 @@
 package com.mrbysco.ageingspawners.util;
 
+import com.mrbysco.ageingspawners.AgeingSpawners;
 import com.mrbysco.ageingspawners.config.SpawnerConfig;
 import net.minecraft.util.ResourceLocation;
+import org.apache.commons.lang3.math.NumberUtils;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 public class AgeingHelper {
+	public static int getDefaultMax() {
+		return SpawnerConfig.general.maxSpawnCount;
+	}
+
 	public static boolean blacklistContains(ResourceLocation registryName) {
 		String[] blacklist = SpawnerConfig.blacklist.blacklist;
 		List<ResourceLocation> blacklistList = new ArrayList<>();
-		for(int i = 0; i < blacklist.length; i++) {
-			blacklistList.add(new ResourceLocation(blacklist[i]));
+		for (String s : blacklist) {
+			blacklistList.add(new ResourceLocation(s));
 		}
 		return blacklistList.contains(registryName);
 	}
 
-	public static boolean whitelistContains(ResourceLocation registryName) {
-		String[] whitelist = SpawnerConfig.whitelist.whitelist;
-		List<ResourceLocation> whitelistList = new ArrayList<>();
-		for(int i = 0; i < whitelist.length; i++) {
-			String info = whitelist[i];
-
-			if(info.contains(";")) {
-				String[] infoArray = info.split(";");
-				if(infoArray.length > 1) {
-					whitelistList.add(new ResourceLocation(infoArray[0]));
-				}
-			} else {
-				whitelistList.add(new ResourceLocation(info));
-			}
-		}
-		return whitelistList.contains(registryName);
+	public static int getMaxSpawnCount(ResourceLocation registryName) {
+		return AgeingSpawners.instance.whitelistMap.getOrDefault(registryName, getDefaultMax());
 	}
 
-	public static int getMaxSpawnCount(ResourceLocation registryName) {
+	public static HashMap<ResourceLocation, Integer> getWhitelistMap() {
+		HashMap<ResourceLocation, Integer> map = new HashMap<>();
 		String[] whitelist = SpawnerConfig.whitelist.whitelist;
-		for(int i = 0; i < whitelist.length; i++) {
-			String info = whitelist[i];
-
-			if(info.contains(";")) {
+		for (String info : whitelist) {
+			if (info.contains(";")) {
 				String[] infoArray = info.split(";");
-				if(infoArray.length > 1 && new ResourceLocation(infoArray[0]).equals(registryName)) {
-					return Integer.valueOf(infoArray[1]);
+				if (infoArray.length > 1) {
+					int max = getDefaultMax();
+					if(NumberUtils.isParsable(infoArray[1])) {
+						max = Integer.parseInt(infoArray[1]);
+					} else {
+						AgeingSpawners.logger.error(String.format("Unparsable number found after %s in the Ageing Spawners config Whitelist section", infoArray[0]));
+					}
+					map.put(new ResourceLocation(infoArray[0]), max);
 				}
 			}
 		}
-		return SpawnerConfig.whitelist.maxSpawnCount;
+		return map;
 	}
 }

@@ -1,16 +1,16 @@
 [
-{
-  "modid": "ageingspawners",
-  "name": "Ageing Spawners",
-  "description": "Spawners that have a limit",
-  "version": "${version}",
-  "mcversion": "${mcversion}",
-  "url": "",
-  "updateUrl": "",
-  "authorList": ["Mrbysco", "ShyNieke"],
-  "credits": "ShyNieke for the idea.",
-  "logoFile": "",
-  "screenshots": [],
-  "dependencies": []
-}
+    {
+      "modid": "ageingspawners",
+      "name": "Ageing Spawners",
+      "description": "Spawners that have a limit",
+      "version": "${version}",
+      "mcversion": "${mcversion}",
+      "url": "",
+      "updateUrl": "",
+      "authorList": ["Mrbysco", "ShyNieke"],
+      "credits": "ShyNieke for the idea.",
+      "logoFile": "",
+      "screenshots": [],
+      "dependencies": []
+    }
 ]
