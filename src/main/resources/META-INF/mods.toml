@@ -1,5 +1,5 @@
 modLoader="javafml"
-loaderVersion="[34,)"
+loaderVersion="[36,)"
 issueTrackerURL="https://github.com/Mrbysco/AgeingSpawners"
 license="MIT"
 
@@ -12,3 +12,10 @@ authors="Mrbysco, ShyNieke"
 description='''
 Spawners that have a limit
 '''
+
+[[dependencies.ageingspawners]]
+modId="forge"
+mandatory=true
+versionRange="[36.0.53,)"
+ordering="NONE"
+side="BOTH"

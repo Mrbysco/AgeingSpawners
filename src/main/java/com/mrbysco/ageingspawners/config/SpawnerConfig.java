@@ -9,7 +9,7 @@ import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.config.ModConfig;
 import org.apache.commons.lang3.tuple.Pair;
 
-import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 public class SpawnerConfig {
@@ -48,7 +48,7 @@ public class SpawnerConfig {
 					.comment("Decides which mobs age a spawner (requires spawnerMode to be set to WHITELIST) \n" +
 							"[syntax: 'modid:entity;times' or 'modid:entity' ] \n" +
 							"[example: 'minecraft:pig;5' ]")
-					.defineList("whitelist", new ArrayList<>(), o -> (o instanceof String));
+					.defineListAllowEmpty(Collections.singletonList("whitelist"), () -> Collections.singletonList(""), o -> (o instanceof String));
 
 			builder.pop();
 			builder.comment("Blacklist settings")
@@ -61,17 +61,17 @@ public class SpawnerConfig {
 			blacklist = builder
 					.comment("Decides which mobs don't age a spawner (requires spawnerMode to be set to BLACKLIST) \n" +
 							"[syntax: 'modid:entity']")
-					.defineList("blacklist", new ArrayList<>(), o -> (o instanceof String));
+					.defineListAllowEmpty(Collections.singletonList("blacklist"), () -> Collections.singletonList(""), o -> (o instanceof String));
 
 			builder.pop();
 		}
 	}
 
 	public static final ForgeConfigSpec serverSpec;
-	public static final SpawnerConfig.Server SERVER;
+	public static final Server SERVER;
 
 	static {
-		final Pair<Server, ForgeConfigSpec> specPair = new ForgeConfigSpec.Builder().configure(SpawnerConfig.Server::new);
+		final Pair<Server, ForgeConfigSpec> specPair = new ForgeConfigSpec.Builder().configure(Server::new);
 		serverSpec = specPair.getRight();
 		SERVER = specPair.getLeft();
 	}
