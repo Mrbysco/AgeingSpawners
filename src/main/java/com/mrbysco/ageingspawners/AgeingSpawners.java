@@ -18,7 +18,7 @@ public class AgeingSpawners {
 
 	public AgeingSpawners() {
 		IEventBus eventBus = FMLJavaModLoadingContext.get().getModEventBus();
-		ModLoadingContext.get().registerConfig(Type.COMMON, SpawnerConfig.serverSpec);
+		ModLoadingContext.get().registerConfig(Type.COMMON, SpawnerConfig.commonSpec);
 		eventBus.register(SpawnerConfig.class);
 
 		MinecraftForge.EVENT_BUS.register(new AgeHandler());

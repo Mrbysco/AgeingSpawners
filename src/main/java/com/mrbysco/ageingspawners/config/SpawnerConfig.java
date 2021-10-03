@@ -18,7 +18,7 @@ public class SpawnerConfig {
 		WHITELIST
 	}
 
-	public static class Server {
+	public static class Common {
 		public final EnumValue<EnumAgeingMode> spawnerMode;
 
 		public final IntValue whitelistMaxSpawnCount;
@@ -28,7 +28,7 @@ public class SpawnerConfig {
 		public final ConfigValue<List<? extends String>> blacklist;
 
 
-		Server(ForgeConfigSpec.Builder builder) {
+		Common(ForgeConfigSpec.Builder builder) {
 			builder.comment("General settings")
 					.push("General");
 
@@ -67,13 +67,13 @@ public class SpawnerConfig {
 		}
 	}
 
-	public static final ForgeConfigSpec serverSpec;
-	public static final Server SERVER;
+	public static final ForgeConfigSpec commonSpec;
+	public static final Common COMMON;
 
 	static {
-		final Pair<Server, ForgeConfigSpec> specPair = new ForgeConfigSpec.Builder().configure(Server::new);
-		serverSpec = specPair.getRight();
-		SERVER = specPair.getLeft();
+		final Pair<Common, ForgeConfigSpec> specPair = new ForgeConfigSpec.Builder().configure(Common::new);
+		commonSpec = specPair.getRight();
+		COMMON = specPair.getLeft();
 	}
 
 	@SubscribeEvent

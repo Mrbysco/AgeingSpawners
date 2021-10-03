@@ -19,12 +19,12 @@ public class AgeHandler {
 
 	@SubscribeEvent
 	public void SpawnEvent(LivingSpawnEvent.CheckSpawn event) {
-		if (!event.getWorld().isRemote() && event.isSpawner()) {
+		if (!event.getWorld().isClientSide() && event.isSpawner()) {
 			AbstractSpawner spawner = event.getSpawner();
 			IWorld world = event.getWorld();
 			if(spawner != null) {
 				ResourceLocation registryName = event.getEntityLiving().getType().getRegistryName();
-				switch (SpawnerConfig.SERVER.spawnerMode.get()) {
+				switch (SpawnerConfig.COMMON.spawnerMode.get()) {
 					case BLACKLIST:
 						handleBlacklist((World)world, spawner, registryName);
 						break;
@@ -39,15 +39,15 @@ public class AgeHandler {
 
 	public void handleBlacklist(World world, AbstractSpawner spawner, ResourceLocation registryName) {
 		if(!AgeingHelper.blacklistContains(registryName)) {
-			this.ageTheSpawner(world, spawner, SpawnerConfig.SERVER.blacklistMaxSpawnCount.get());
+			this.ageTheSpawner(world, spawner, SpawnerConfig.COMMON.blacklistMaxSpawnCount.get());
 		} else {
-			BlockPos pos = spawner.getSpawnerPosition();
-			ResourceLocation dimensionLocation = world.getDimensionKey().getLocation();
+			BlockPos pos = spawner.getPos();
+			ResourceLocation dimensionLocation = world.dimension().location();
 			AgeingWorldData worldData = AgeingWorldData.get(world);
 			Map<BlockPos, Integer> locationMap = worldData.getMapFromWorld(dimensionLocation);
 			locationMap.remove(pos);
 			worldData.setMapForWorld(dimensionLocation, locationMap);
-			worldData.markDirty();
+			worldData.setDirty();
 		}
 	}
 
@@ -56,23 +56,23 @@ public class AgeHandler {
 			int maxSpawnCount = AgeingHelper.getMaxSpawnCount(registryName);
 			this.ageTheSpawner(world, spawner, maxSpawnCount);
 		} else {
-			BlockPos pos = spawner.getSpawnerPosition();
-			ResourceLocation dimensionLocation = world.getDimensionKey().getLocation();
+			BlockPos pos = spawner.getPos();
+			ResourceLocation dimensionLocation = world.dimension().location();
 			AgeingWorldData worldData = AgeingWorldData.get(world);
 			Map<BlockPos, Integer> locationMap = worldData.getMapFromWorld(dimensionLocation);
 			locationMap.remove(pos);
 			worldData.setMapForWorld(dimensionLocation, locationMap);
-			worldData.markDirty();
+			worldData.setDirty();
 		}
 	}
 
 	public void ageTheSpawner(World world, AbstractSpawner spawner, int maxCount) {
-		BlockPos spawnerPos = spawner.getSpawnerPosition();
-		ResourceLocation dimensionLocation = world.getDimensionKey().getLocation();
+		BlockPos spawnerPos = spawner.getPos();
+		ResourceLocation dimensionLocation = world.dimension().location();
 		AgeingWorldData worldData = AgeingWorldData.get(world);
 		Map<BlockPos, Integer> locationMap = worldData.getMapFromWorld(dimensionLocation);
 
-		if(world.getTileEntity(spawnerPos) != null && world.getTileEntity(spawnerPos) instanceof MobSpawnerTileEntity) {
+		if(world.getBlockEntity(spawnerPos) != null && world.getBlockEntity(spawnerPos) instanceof MobSpawnerTileEntity) {
 			int spawnCount = locationMap.getOrDefault(spawnerPos, 0);
 			spawnCount++;
 			if(spawnCount >= maxCount) {
@@ -83,15 +83,15 @@ public class AgeHandler {
 			}
 		}
 		worldData.setMapForWorld(dimensionLocation, locationMap);
-		worldData.markDirty();
+		worldData.setDirty();
 	}
 
 	@SubscribeEvent
 	public void breakEvent(BreakEvent event) {
-		if(!event.getWorld().isRemote()) {
+		if(!event.getWorld().isClientSide()) {
 			BlockPos pos = event.getPos();
 			World world = (World) event.getWorld();
-			ResourceLocation dimensionLocation = world.getDimensionKey().getLocation();
+			ResourceLocation dimensionLocation = world.dimension().location();
 			Map<BlockPos, Integer> locationMap = AgeingWorldData.get(world).getMapFromWorld(dimensionLocation);
 			locationMap.remove(pos);
 		}

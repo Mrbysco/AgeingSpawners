@@ -9,7 +9,7 @@ import java.util.List;
 
 public class AgeingHelper {
 	public static boolean blacklistContains(ResourceLocation registryName) {
-		List<? extends String> blacklist = SpawnerConfig.SERVER.blacklist.get();
+		List<? extends String> blacklist = SpawnerConfig.COMMON.blacklist.get();
 		List<ResourceLocation> blacklistList = new ArrayList<>();
 		for (String s : blacklist) {
 			if(!s.isEmpty()) {
@@ -20,7 +20,7 @@ public class AgeingHelper {
 	}
 
 	public static boolean whitelistContains(ResourceLocation registryName) {
-		List<? extends String> whitelist = SpawnerConfig.SERVER.whitelist.get();
+		List<? extends String> whitelist = SpawnerConfig.COMMON.whitelist.get();
 		List<ResourceLocation> whitelistList = new ArrayList<>();
 		for (String info : whitelist) {
 			if(!info.isEmpty()) {
@@ -38,7 +38,7 @@ public class AgeingHelper {
 	}
 
 	public static int getMaxSpawnCount(ResourceLocation registryName) {
-		List<? extends String> whitelist = SpawnerConfig.SERVER.whitelist.get();
+		List<? extends String> whitelist = SpawnerConfig.COMMON.whitelist.get();
 		for (String info : whitelist) {
 			if(!info.isEmpty()) {
 				if (info.contains(";")) {
@@ -49,6 +49,6 @@ public class AgeingHelper {
 				}
 			}
 		}
-		return SpawnerConfig.SERVER.whitelistMaxSpawnCount.get();
+		return SpawnerConfig.COMMON.whitelistMaxSpawnCount.get();
 	}
 }

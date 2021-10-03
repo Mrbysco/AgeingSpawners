@@ -25,14 +25,14 @@ public class AgeingWorldData extends WorldSavedData {
 	}
 
 	@Override
-	public void read(CompoundNBT compound) {
-		for(String nbtName : compound.keySet()) {
+	public void load(CompoundNBT compound) {
+		for(String nbtName : compound.getAllKeys()) {
 			ListNBT dimensionNBTList = new ListNBT();
-			if(compound.getTagId(nbtName) == 9) {
+			if(compound.getTagType(nbtName) == 9) {
 				INBT nbt = compound.get(nbtName);
 				if(nbt instanceof ListNBT) {
 					ListNBT listNBT = (ListNBT) nbt;
-					if (!listNBT.isEmpty() && listNBT.getTagType() != Constants.NBT.TAG_COMPOUND) {
+					if (!listNBT.isEmpty() && listNBT.getElementType() != Constants.NBT.TAG_COMPOUND) {
 						return;
 					}
 
@@ -44,7 +44,7 @@ public class AgeingWorldData extends WorldSavedData {
 				for (int i = 0; i < dimensionNBTList.size(); ++i) {
 					CompoundNBT tag = dimensionNBTList.getCompound(i);
 					if(tag.contains("BlockPos") && tag.contains("Amount")) {
-						BlockPos blockPos = BlockPos.fromLong(tag.getLong("BlockPos"));
+						BlockPos blockPos = BlockPos.of(tag.getLong("BlockPos"));
 						int amount = tag.getInt("Amount");
 
 						locationMap.put(blockPos, amount);
@@ -56,7 +56,7 @@ public class AgeingWorldData extends WorldSavedData {
 	}
 
 	@Override
-	public CompoundNBT write(CompoundNBT compound) {
+	public CompoundNBT save(CompoundNBT compound) {
 		for (Map.Entry<ResourceLocation, Map<BlockPos, Integer>> dimensionEntry : worldSpawnerMap.entrySet()) {
 			ResourceLocation dimensionLocation = dimensionEntry.getKey();
 			Map<BlockPos, Integer> savedPositions = dimensionEntry.getValue();
@@ -64,7 +64,7 @@ public class AgeingWorldData extends WorldSavedData {
 			ListNBT dimensionStorage = new ListNBT();
 			for (Map.Entry<BlockPos, Integer> entry : savedPositions.entrySet()) {
 				CompoundNBT positionTag = new CompoundNBT();
-				positionTag.putLong("BlockPos", entry.getKey().toLong());
+				positionTag.putLong("BlockPos", entry.getKey().asLong());
 				positionTag.putInt("Amount", entry.getValue());
 				dimensionStorage.add(positionTag);
 			}
@@ -85,9 +85,9 @@ public class AgeingWorldData extends WorldSavedData {
 		if (!(world instanceof ServerWorld)) {
 			throw new RuntimeException("Attempted to get the data from a client world. This is wrong.");
 		}
-		ServerWorld overworld = world.getServer().getWorld(World.OVERWORLD);
+		ServerWorld overworld = world.getServer().getLevel(World.OVERWORLD);
 
-		DimensionSavedDataManager storage = overworld.getSavedData();
-		return storage.getOrCreate(AgeingWorldData::new, DATA_NAME);
+		DimensionSavedDataManager storage = overworld.getDataStorage();
+		return storage.computeIfAbsent(AgeingWorldData::new, DATA_NAME);
 	}
 }
