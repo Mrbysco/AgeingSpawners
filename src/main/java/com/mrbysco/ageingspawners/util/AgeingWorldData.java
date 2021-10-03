@@ -1,39 +1,45 @@
 package com.mrbysco.ageingspawners.util;
 
 import com.mrbysco.ageingspawners.Reference;
-import net.minecraft.nbt.CompoundNBT;
-import net.minecraft.nbt.INBT;
-import net.minecraft.nbt.ListNBT;
-import net.minecraft.util.ResourceLocation;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.world.World;
-import net.minecraft.world.server.ServerWorld;
-import net.minecraft.world.storage.DimensionSavedDataManager;
-import net.minecraft.world.storage.WorldSavedData;
+import net.minecraft.core.BlockPos;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.nbt.ListTag;
+import net.minecraft.nbt.Tag;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.server.level.ServerLevel;
+import net.minecraft.world.level.Level;
+import net.minecraft.world.level.saveddata.SavedData;
+import net.minecraft.world.level.storage.DimensionDataStorage;
 import net.minecraftforge.common.util.Constants;
 
 import java.util.HashMap;
 import java.util.Map;
 
-public class AgeingWorldData extends WorldSavedData {
+public class AgeingWorldData extends SavedData {
 	private static final String DATA_NAME = Reference.MOD_ID + "_world_data";
 
 	private final Map<ResourceLocation, Map<BlockPos, Integer>> worldSpawnerMap = new HashMap<>();
 
-	public AgeingWorldData() {
-		super(DATA_NAME);
+	public AgeingWorldData(Map<ResourceLocation, Map<BlockPos, Integer>> map) {
+		if(!map.isEmpty()) {
+			this.worldSpawnerMap.clear();
+			this.worldSpawnerMap.putAll(map);
+		}
 	}
 
-	@Override
-	public void load(CompoundNBT compound) {
+	public AgeingWorldData() {
+		this(new HashMap<>());
+	}
+
+	public static AgeingWorldData load(CompoundTag compound) {
+		Map<ResourceLocation, Map<BlockPos, Integer>> map = new HashMap<>();
 		for(String nbtName : compound.getAllKeys()) {
-			ListNBT dimensionNBTList = new ListNBT();
+			ListTag dimensionNBTList = new ListTag();
 			if(compound.getTagType(nbtName) == 9) {
-				INBT nbt = compound.get(nbtName);
-				if(nbt instanceof ListNBT) {
-					ListNBT listNBT = (ListNBT) nbt;
+				Tag nbt = compound.get(nbtName);
+				if(nbt instanceof ListTag listNBT) {
 					if (!listNBT.isEmpty() && listNBT.getElementType() != Constants.NBT.TAG_COMPOUND) {
-						return;
+						continue;
 					}
 
 					dimensionNBTList = listNBT;
@@ -42,7 +48,7 @@ public class AgeingWorldData extends WorldSavedData {
 			if(!dimensionNBTList.isEmpty()) {
 				Map<BlockPos, Integer> locationMap = new HashMap<>();
 				for (int i = 0; i < dimensionNBTList.size(); ++i) {
-					CompoundNBT tag = dimensionNBTList.getCompound(i);
+					CompoundTag tag = dimensionNBTList.getCompound(i);
 					if(tag.contains("BlockPos") && tag.contains("Amount")) {
 						BlockPos blockPos = BlockPos.of(tag.getLong("BlockPos"));
 						int amount = tag.getInt("Amount");
@@ -50,20 +56,21 @@ public class AgeingWorldData extends WorldSavedData {
 						locationMap.put(blockPos, amount);
 					}
 				}
-				worldSpawnerMap.put(new ResourceLocation(nbtName), locationMap);
+				map.put(new ResourceLocation(nbtName), locationMap);
 			}
 		}
+		return new AgeingWorldData(map);
 	}
 
 	@Override
-	public CompoundNBT save(CompoundNBT compound) {
+	public CompoundTag save(CompoundTag compound) {
 		for (Map.Entry<ResourceLocation, Map<BlockPos, Integer>> dimensionEntry : worldSpawnerMap.entrySet()) {
 			ResourceLocation dimensionLocation = dimensionEntry.getKey();
 			Map<BlockPos, Integer> savedPositions = dimensionEntry.getValue();
 
-			ListNBT dimensionStorage = new ListNBT();
+			ListTag dimensionStorage = new ListTag();
 			for (Map.Entry<BlockPos, Integer> entry : savedPositions.entrySet()) {
-				CompoundNBT positionTag = new CompoundNBT();
+				CompoundTag positionTag = new CompoundTag();
 				positionTag.putLong("BlockPos", entry.getKey().asLong());
 				positionTag.putInt("Amount", entry.getValue());
 				dimensionStorage.add(positionTag);
@@ -81,13 +88,13 @@ public class AgeingWorldData extends WorldSavedData {
 		worldSpawnerMap.put(dimensionLocation, locationMap);
 	}
 
-	public static AgeingWorldData get(World world) {
-		if (!(world instanceof ServerWorld)) {
+	public static AgeingWorldData get(Level world) {
+		if (!(world instanceof ServerLevel)) {
 			throw new RuntimeException("Attempted to get the data from a client world. This is wrong.");
 		}
-		ServerWorld overworld = world.getServer().getLevel(World.OVERWORLD);
+		ServerLevel overworld = world.getServer().getLevel(Level.OVERWORLD);
 
-		DimensionSavedDataManager storage = overworld.getDataStorage();
-		return storage.computeIfAbsent(AgeingWorldData::new, DATA_NAME);
+		DimensionDataStorage storage = overworld.getDataStorage();
+		return storage.computeIfAbsent(AgeingWorldData::load, AgeingWorldData::new, DATA_NAME);
 	}
 }

@@ -1,7 +1,7 @@
 package com.mrbysco.ageingspawners.util;
 
 import com.mrbysco.ageingspawners.config.SpawnerConfig;
-import net.minecraft.util.ResourceLocation;
+import net.minecraft.resources.ResourceLocation;
 import org.apache.commons.lang3.math.NumberUtils;
 
 import java.util.ArrayList;
