@@ -2,6 +2,7 @@ package com.mrbysco.ageingspawners.config;
 
 import com.mrbysco.ageingspawners.AgeingSpawners;
 import net.minecraftforge.common.ForgeConfigSpec;
+import net.minecraftforge.common.ForgeConfigSpec.BooleanValue;
 import net.minecraftforge.common.ForgeConfigSpec.ConfigValue;
 import net.minecraftforge.common.ForgeConfigSpec.EnumValue;
 import net.minecraftforge.common.ForgeConfigSpec.IntValue;
@@ -20,6 +21,7 @@ public class SpawnerConfig {
 
 	public static class Common {
 		public final EnumValue<EnumAgeingMode> spawnerMode;
+		public final BooleanValue playerPlacedOnly;
 
 		public final IntValue whitelistMaxSpawnCount;
 		public final ConfigValue<List<? extends String>> whitelist;
@@ -33,15 +35,19 @@ public class SpawnerConfig {
 					.push("General");
 
 			spawnerMode = builder
-					.comment("Decides whether the spawner is on blacklist or whitelist-only mode [Default: WHITELIST]")
+					.comment("Decides whether the spawner is on blacklist, whitelist-only or player_placed mode [Default: WHITELIST]")
 					.defineEnum("spawnerMode", EnumAgeingMode.WHITELIST);
+
+			playerPlacedOnly = builder
+					.comment("Decides whether only player placed spawners age [Default: false]")
+					.define("playerPlacedOnly", false);
 
 			builder.pop();
 			builder.comment("Whitelist settings")
 					.push("Whitelist");
 
 			whitelistMaxSpawnCount = builder
-					.comment("Decides default amount of spawns a spawner can have in WHITELIST mode unless specified [Default: 20]")
+					.comment("Decides default spawnCount of spawns a spawner can have in WHITELIST mode unless specified [Default: 20]")
 					.defineInRange("whitelistMaxSpawnCount", 20, 1, Integer.MAX_VALUE);
 
 			whitelist = builder
@@ -55,7 +61,7 @@ public class SpawnerConfig {
 					.push("Blacklist");
 
 			blacklistMaxSpawnCount = builder
-					.comment("Decides the amount of spawns a spawner can have in BLACKLIST mode [Default: 20]")
+					.comment("Decides the spawnCount of spawns a spawner can have in BLACKLIST mode [Default: 20]")
 					.defineInRange("blacklistMaxSpawnCount", 20, 1, Integer.MAX_VALUE);
 
 			blacklist = builder

@@ -17,9 +17,9 @@ import java.util.Map;
 public class AgeingWorldData extends SavedData {
 	private static final String DATA_NAME = Reference.MOD_ID + "_world_data";
 
-	private final Map<ResourceLocation, Map<BlockPos, Integer>> worldSpawnerMap = new HashMap<>();
+	private final Map<ResourceLocation, Map<BlockPos, SpawnerInfo>> worldSpawnerMap = new HashMap<>();
 
-	public AgeingWorldData(Map<ResourceLocation, Map<BlockPos, Integer>> map) {
+	public AgeingWorldData(Map<ResourceLocation, Map<BlockPos, SpawnerInfo>> map) {
 		if(!map.isEmpty()) {
 			this.worldSpawnerMap.clear();
 			this.worldSpawnerMap.putAll(map);
@@ -31,7 +31,7 @@ public class AgeingWorldData extends SavedData {
 	}
 
 	public static AgeingWorldData load(CompoundTag compound) {
-		Map<ResourceLocation, Map<BlockPos, Integer>> map = new HashMap<>();
+		Map<ResourceLocation, Map<BlockPos, SpawnerInfo>> map = new HashMap<>();
 		for(String nbtName : compound.getAllKeys()) {
 			ListTag dimensionNBTList = new ListTag();
 			if(compound.getTagType(nbtName) == 9) {
@@ -45,17 +45,18 @@ public class AgeingWorldData extends SavedData {
 				}
 			}
 			if(!dimensionNBTList.isEmpty()) {
-				Map<BlockPos, Integer> locationMap = new HashMap<>();
+				Map<BlockPos, SpawnerInfo> posMap = new HashMap<>();
 				for (int i = 0; i < dimensionNBTList.size(); ++i) {
 					CompoundTag tag = dimensionNBTList.getCompound(i);
 					if(tag.contains("BlockPos") && tag.contains("Amount")) {
 						BlockPos blockPos = BlockPos.of(tag.getLong("BlockPos"));
 						int amount = tag.getInt("Amount");
+						boolean playerPlaced = tag.getBoolean("PlayerPlaced");
 
-						locationMap.put(blockPos, amount);
+						posMap.put(blockPos, new SpawnerInfo(amount, playerPlaced));
 					}
 				}
-				map.put(new ResourceLocation(nbtName), locationMap);
+				map.put(new ResourceLocation(nbtName), posMap);
 			}
 		}
 		return new AgeingWorldData(map);
@@ -63,15 +64,17 @@ public class AgeingWorldData extends SavedData {
 
 	@Override
 	public CompoundTag save(CompoundTag compound) {
-		for (Map.Entry<ResourceLocation, Map<BlockPos, Integer>> dimensionEntry : worldSpawnerMap.entrySet()) {
+		for (Map.Entry<ResourceLocation, Map<BlockPos, SpawnerInfo>> dimensionEntry : worldSpawnerMap.entrySet()) {
 			ResourceLocation dimensionLocation = dimensionEntry.getKey();
-			Map<BlockPos, Integer> savedPositions = dimensionEntry.getValue();
+			Map<BlockPos, SpawnerInfo> savedPositions = dimensionEntry.getValue();
 
 			ListTag dimensionStorage = new ListTag();
-			for (Map.Entry<BlockPos, Integer> entry : savedPositions.entrySet()) {
+			for (Map.Entry<BlockPos, SpawnerInfo> entry : savedPositions.entrySet()) {
+				SpawnerInfo info = entry.getValue();
 				CompoundTag positionTag = new CompoundTag();
 				positionTag.putLong("BlockPos", entry.getKey().asLong());
-				positionTag.putInt("Amount", entry.getValue());
+				positionTag.putInt("Amount", info.spawnCount());
+				positionTag.putBoolean("PlayerPlaced", info.playerPlaced());
 				dimensionStorage.add(positionTag);
 			}
 			compound.put(dimensionLocation.toString(), dimensionStorage);
@@ -79,12 +82,12 @@ public class AgeingWorldData extends SavedData {
 		return compound;
 	}
 
-	public Map<BlockPos, Integer> getMapFromWorld(ResourceLocation dimensionLocation) {
+	public Map<BlockPos, SpawnerInfo> getMapFromWorld(ResourceLocation dimensionLocation) {
 		return worldSpawnerMap.getOrDefault(dimensionLocation, new HashMap<>());
 	}
 
-	public void setMapForWorld(ResourceLocation dimensionLocation, Map<BlockPos, Integer> locationMap) {
-		worldSpawnerMap.put(dimensionLocation, locationMap);
+	public void setMapForWorld(ResourceLocation dimensionLocation, Map<BlockPos, SpawnerInfo> spawnerInfoList) {
+		worldSpawnerMap.put(dimensionLocation, spawnerInfoList);
 	}
 
 	public static AgeingWorldData get(Level world) {
@@ -96,4 +99,6 @@ public class AgeingWorldData extends SavedData {
 		DimensionDataStorage storage = overworld.getDataStorage();
 		return storage.computeIfAbsent(AgeingWorldData::load, AgeingWorldData::new, DATA_NAME);
 	}
+
+	public record SpawnerInfo(Integer spawnCount, boolean playerPlaced) { }
 }
