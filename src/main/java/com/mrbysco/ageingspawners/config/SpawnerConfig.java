@@ -84,11 +84,11 @@ public class SpawnerConfig {
 
 	@SubscribeEvent
 	public static void onLoad(final ModConfigEvent.Loading configEvent) {
-		AgeingSpawners.logger.debug("Loaded Ageing Spawners' config file {}", configEvent.getConfig().getFileName());
+		AgeingSpawners.LOGGER.debug("Loaded Ageing Spawners' config file {}", configEvent.getConfig().getFileName());
 	}
 
 	@SubscribeEvent
 	public static void onFileChange(final ModConfigEvent.Reloading configEvent) {
-		AgeingSpawners.logger.debug("Ageing Spawners' config just got changed on the file system!");
+		AgeingSpawners.LOGGER.warn("Ageing Spawners' config just got changed on the file system!");
 	}
 }

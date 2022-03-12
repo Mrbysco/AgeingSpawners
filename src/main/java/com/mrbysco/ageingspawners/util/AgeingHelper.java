@@ -12,7 +12,7 @@ public class AgeingHelper {
 		List<? extends String> blacklist = SpawnerConfig.COMMON.blacklist.get();
 		List<ResourceLocation> blacklistList = new ArrayList<>();
 		for (String s : blacklist) {
-			if(!s.isEmpty()) {
+			if (!s.isEmpty()) {
 				blacklistList.add(new ResourceLocation(s));
 			}
 		}
@@ -23,7 +23,7 @@ public class AgeingHelper {
 		List<? extends String> whitelist = SpawnerConfig.COMMON.whitelist.get();
 		List<ResourceLocation> whitelistList = new ArrayList<>();
 		for (String info : whitelist) {
-			if(!info.isEmpty()) {
+			if (!info.isEmpty()) {
 				if (info.contains(";")) {
 					String[] infoArray = info.split(";");
 					if (infoArray.length > 1) {
@@ -40,7 +40,7 @@ public class AgeingHelper {
 	public static int getMaxSpawnCount(ResourceLocation registryName) {
 		List<? extends String> whitelist = SpawnerConfig.COMMON.whitelist.get();
 		for (String info : whitelist) {
-			if(!info.isEmpty()) {
+			if (!info.isEmpty()) {
 				if (info.contains(";")) {
 					String[] infoArray = info.split(";");
 					if (infoArray.length > 1 && new ResourceLocation(infoArray[0]).equals(registryName)) {

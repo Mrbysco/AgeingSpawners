@@ -20,7 +20,7 @@ public class AgeingWorldData extends SavedData {
 	private final Map<ResourceLocation, Map<BlockPos, SpawnerInfo>> worldSpawnerMap = new HashMap<>();
 
 	public AgeingWorldData(Map<ResourceLocation, Map<BlockPos, SpawnerInfo>> map) {
-		if(!map.isEmpty()) {
+		if (!map.isEmpty()) {
 			this.worldSpawnerMap.clear();
 			this.worldSpawnerMap.putAll(map);
 		}
@@ -32,11 +32,11 @@ public class AgeingWorldData extends SavedData {
 
 	public static AgeingWorldData load(CompoundTag compound) {
 		Map<ResourceLocation, Map<BlockPos, SpawnerInfo>> map = new HashMap<>();
-		for(String nbtName : compound.getAllKeys()) {
+		for (String nbtName : compound.getAllKeys()) {
 			ListTag dimensionNBTList = new ListTag();
-			if(compound.getTagType(nbtName) == 9) {
+			if (compound.getTagType(nbtName) == 9) {
 				Tag nbt = compound.get(nbtName);
-				if(nbt instanceof ListTag listNBT) {
+				if (nbt instanceof ListTag listNBT) {
 					if (!listNBT.isEmpty() && listNBT.getElementType() != CompoundTag.TAG_COMPOUND) {
 						continue;
 					}
@@ -44,11 +44,11 @@ public class AgeingWorldData extends SavedData {
 					dimensionNBTList = listNBT;
 				}
 			}
-			if(!dimensionNBTList.isEmpty()) {
+			if (!dimensionNBTList.isEmpty()) {
 				Map<BlockPos, SpawnerInfo> posMap = new HashMap<>();
 				for (int i = 0; i < dimensionNBTList.size(); ++i) {
 					CompoundTag tag = dimensionNBTList.getCompound(i);
-					if(tag.contains("BlockPos") && tag.contains("Amount")) {
+					if (tag.contains("BlockPos") && tag.contains("Amount")) {
 						BlockPos blockPos = BlockPos.of(tag.getLong("BlockPos"));
 						int amount = tag.getInt("Amount");
 						boolean playerPlaced = tag.getBoolean("PlayerPlaced");
@@ -100,5 +100,6 @@ public class AgeingWorldData extends SavedData {
 		return storage.computeIfAbsent(AgeingWorldData::load, AgeingWorldData::new, DATA_NAME);
 	}
 
-	public record SpawnerInfo(Integer spawnCount, boolean playerPlaced) { }
+	public record SpawnerInfo(Integer spawnCount, boolean playerPlaced) {
+	}
 }
