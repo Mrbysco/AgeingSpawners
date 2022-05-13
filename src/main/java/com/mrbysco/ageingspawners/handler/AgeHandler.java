@@ -6,6 +6,7 @@ import com.mrbysco.ageingspawners.util.AgeingWorldData;
 import com.mrbysco.ageingspawners.util.AgeingWorldData.SpawnerInfo;
 import net.minecraft.core.BlockPos;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.BaseSpawner;
 import net.minecraft.world.level.Level;
@@ -24,21 +25,21 @@ public class AgeHandler {
 	@SubscribeEvent
 	public void SpawnEvent(LivingSpawnEvent.CheckSpawn event) {
 		if (!event.getWorld().isClientSide() && event.isSpawner()) {
-			BaseSpawner spawner = event.getSpawner();
-			LevelAccessor world = event.getWorld();
-			if (event.isSpawner()) {
-				ResourceLocation registryName = event.getEntityLiving().getType().getRegistryName();
-				switch (SpawnerConfig.COMMON.spawnerMode.get()) {
-					case BLACKLIST -> handleBlacklist((Level) world, spawner, registryName);
-					case WHITELIST -> handleWhitelist((Level) world, spawner, registryName);
-				}
-			}
+			handleSpawner(event.getWorld(), event.getSpawner(), event.getEntity());
 		}
 	}
 
-	public void handleBlacklist(Level world, BaseSpawner spawner, ResourceLocation registryName) {
+	public static void handleSpawner(LevelAccessor level, BaseSpawner spawner, Entity entity) {
+		ResourceLocation registryName = entity.getType().getRegistryName();
+		switch (SpawnerConfig.COMMON.spawnerMode.get()) {
+			case BLACKLIST -> handleBlacklist((Level) level, spawner, registryName);
+			case WHITELIST -> handleWhitelist((Level) level, spawner, registryName);
+		}
+	}
+
+	private static void handleBlacklist(Level world, BaseSpawner spawner, ResourceLocation registryName) {
 		if (!AgeingHelper.blacklistContains(registryName)) {
-			this.ageTheSpawner(world, spawner, SpawnerConfig.COMMON.blacklistMaxSpawnCount.get());
+			ageTheSpawner(world, spawner, SpawnerConfig.COMMON.blacklistMaxSpawnCount.get());
 		} else {
 			if (spawner.getSpawnerBlockEntity() != null) {
 				BlockPos pos = spawner.getSpawnerBlockEntity().getBlockPos();
@@ -52,10 +53,10 @@ public class AgeHandler {
 		}
 	}
 
-	public void handleWhitelist(Level world, BaseSpawner spawner, ResourceLocation registryName) {
+	private static void handleWhitelist(Level world, BaseSpawner spawner, ResourceLocation registryName) {
 		if (AgeingHelper.whitelistContains(registryName)) {
 			int maxSpawnCount = AgeingHelper.getMaxSpawnCount(registryName);
-			this.ageTheSpawner(world, spawner, maxSpawnCount);
+			ageTheSpawner(world, spawner, maxSpawnCount);
 		} else {
 			if (spawner.getSpawnerBlockEntity() != null) {
 				BlockPos pos = spawner.getSpawnerBlockEntity().getBlockPos();
@@ -69,7 +70,7 @@ public class AgeHandler {
 		}
 	}
 
-	public void ageTheSpawner(Level world, BaseSpawner spawner, int maxCount) {
+	private static void ageTheSpawner(Level world, BaseSpawner spawner, int maxCount) {
 		if (spawner.getSpawnerBlockEntity() != null) {
 			BlockPos pos = spawner.getSpawnerBlockEntity().getBlockPos();
 			ResourceLocation dimensionLocation = world.dimension().location();
