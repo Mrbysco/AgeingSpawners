@@ -14,9 +14,10 @@ import net.minecraft.world.level.LevelAccessor;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.entity.SpawnerBlockEntity;
 import net.minecraftforge.event.entity.living.LivingSpawnEvent;
-import net.minecraftforge.event.world.BlockEvent.BreakEvent;
-import net.minecraftforge.event.world.BlockEvent.EntityPlaceEvent;
+import net.minecraftforge.event.level.BlockEvent.BreakEvent;
+import net.minecraftforge.event.level.BlockEvent.EntityPlaceEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
+import net.minecraftforge.registries.ForgeRegistries;
 
 import java.util.Map;
 
@@ -24,13 +25,13 @@ public class AgeHandler {
 
 	@SubscribeEvent
 	public void SpawnEvent(LivingSpawnEvent.CheckSpawn event) {
-		if (!event.getWorld().isClientSide() && event.isSpawner()) {
-			handleSpawner(event.getWorld(), event.getSpawner(), event.getEntity());
+		if (!event.getLevel().isClientSide() && event.isSpawner()) {
+			handleSpawner(event.getLevel(), event.getSpawner(), event.getEntity());
 		}
 	}
 
 	public static void handleSpawner(LevelAccessor level, BaseSpawner spawner, Entity entity) {
-		ResourceLocation registryName = entity.getType().getRegistryName();
+		ResourceLocation registryName = ForgeRegistries.ENTITY_TYPES.getKey(entity.getType());
 		switch (SpawnerConfig.COMMON.spawnerMode.get()) {
 			case BLACKLIST -> handleBlacklist((Level) level, spawner, registryName);
 			case WHITELIST -> handleWhitelist((Level) level, spawner, registryName);
@@ -99,9 +100,9 @@ public class AgeHandler {
 
 	@SubscribeEvent
 	public void placeEvent(EntityPlaceEvent event) {
-		if (!event.getWorld().isClientSide() && event.getPlacedBlock().is(Blocks.SPAWNER) && event.getEntity() instanceof Player) {
+		if (!event.getLevel().isClientSide() && event.getPlacedBlock().is(Blocks.SPAWNER) && event.getEntity() instanceof Player) {
 			BlockPos pos = event.getPos();
-			Level world = (Level) event.getWorld();
+			Level world = (Level) event.getLevel();
 			ResourceLocation dimensionLocation = world.dimension().location();
 			AgeingWorldData worldData = AgeingWorldData.get(world);
 			Map<BlockPos, SpawnerInfo> locationMap = worldData.getMapFromWorld(dimensionLocation);
@@ -114,9 +115,9 @@ public class AgeHandler {
 
 	@SubscribeEvent
 	public void breakEvent(BreakEvent event) {
-		if (!event.getWorld().isClientSide()) {
+		if (!event.getLevel().isClientSide()) {
 			BlockPos pos = event.getPos();
-			Level world = (Level) event.getWorld();
+			Level world = (Level) event.getLevel();
 			ResourceLocation dimensionLocation = world.dimension().location();
 			AgeingWorldData worldData = AgeingWorldData.get(world);
 			Map<BlockPos, SpawnerInfo> locationMap = worldData.getMapFromWorld(dimensionLocation);
