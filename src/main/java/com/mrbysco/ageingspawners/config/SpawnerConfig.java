@@ -51,8 +51,8 @@ public class SpawnerConfig {
 					.defineInRange("whitelistMaxSpawnCount", 20, 1, Integer.MAX_VALUE);
 
 			whitelist = builder
-					.comment("Decides which mobs age a spawner (requires spawnerMode to be set to WHITELIST) \n" +
-							"[syntax: 'modid:entity;times' or 'modid:entity' ] \n" +
+					.comment("Decides which mobs age a spawner (requires spawnerMode to be set to WHITELIST)",
+							"[syntax: 'modid:entity;times' or 'modid:entity' ]",
 							"[example: 'minecraft:pig;5' ]")
 					.defineListAllowEmpty(Collections.singletonList("whitelist"), () -> Collections.singletonList(""), o -> (o instanceof String));
 

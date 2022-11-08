@@ -90,11 +90,11 @@ public class AgeingWorldData extends SavedData {
 		worldSpawnerMap.put(dimensionLocation, spawnerInfoList);
 	}
 
-	public static AgeingWorldData get(Level world) {
-		if (!(world instanceof ServerLevel)) {
+	public static AgeingWorldData get(Level level) {
+		if (!(level instanceof ServerLevel)) {
 			throw new RuntimeException("Attempted to get the data from a client world. This is wrong.");
 		}
-		ServerLevel overworld = world.getServer().getLevel(Level.OVERWORLD);
+		ServerLevel overworld = level.getServer().getLevel(Level.OVERWORLD);
 
 		DimensionDataStorage storage = overworld.getDataStorage();
 		return storage.computeIfAbsent(AgeingWorldData::load, AgeingWorldData::new, DATA_NAME);
