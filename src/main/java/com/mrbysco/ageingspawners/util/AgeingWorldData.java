@@ -1,6 +1,6 @@
 package com.mrbysco.ageingspawners.util;
 
-import com.mrbysco.ageingspawners.Reference;
+import com.mrbysco.ageingspawners.AgeingSpawners;
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
@@ -15,7 +15,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class AgeingWorldData extends SavedData {
-	private static final String DATA_NAME = Reference.MOD_ID + "_world_data";
+	private static final String DATA_NAME = AgeingSpawners.MOD_ID + "_world_data";
 
 	private final Map<ResourceLocation, Map<BlockPos, SpawnerInfo>> worldSpawnerMap = new HashMap<>();
 

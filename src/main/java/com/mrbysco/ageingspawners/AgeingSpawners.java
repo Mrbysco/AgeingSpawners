@@ -11,8 +11,9 @@ import net.minecraftforge.fml.config.ModConfig.Type;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 import org.slf4j.Logger;
 
-@Mod(Reference.MOD_ID)
+@Mod(AgeingSpawners.MOD_ID)
 public class AgeingSpawners {
+	public static final String MOD_ID = "ageingspawners";
 	public static final Logger LOGGER = LogUtils.getLogger();
 
 	public AgeingSpawners() {
