@@ -14,7 +14,7 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.level.ServerLevelAccessor;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.entity.SpawnerBlockEntity;
-import net.minecraftforge.event.entity.living.LivingSpawnEvent;
+import net.minecraftforge.event.entity.living.MobSpawnEvent;
 import net.minecraftforge.event.level.BlockEvent.BreakEvent;
 import net.minecraftforge.event.level.BlockEvent.EntityPlaceEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
@@ -25,9 +25,9 @@ import java.util.Map;
 public class AgeHandler {
 
 	@SubscribeEvent
-	public void SpawnEvent(LivingSpawnEvent.CheckSpawn event) {
-		if (!event.getLevel().isClientSide() && event.isSpawner() && event.getLevel() instanceof ServerLevelAccessor serverLevelAccessor) {
-			handleSpawner(serverLevelAccessor.getLevel(), event.getSpawner(), event.getEntity());
+	public void SpawnEvent(MobSpawnEvent.FinalizeSpawn event) {
+		if (!event.getLevel().isClientSide() && event.getSpawner() != null) {
+			handleSpawner(event.getLevel().getLevel(), event.getSpawner(), event.getEntity());
 		}
 	}
 
