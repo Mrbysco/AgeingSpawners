@@ -7,7 +7,10 @@ if (System.getenv().CURSEFORGE_KEY) {
             id = project.curseforge_id
             releaseType = "release"
             addGameVersion "Forge"
+            addGameVersion "1.19"
+            addGameVersion "1.19.1"
             addGameVersion "${mc_version}"
+            addGameVersion "1.19.3"
             addGameVersion "Java 17"
             mainArtifact(jar)
             changelog = file("$project.rootDir/changelog.md")
