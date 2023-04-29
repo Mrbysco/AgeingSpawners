@@ -1,5 +1,6 @@
 package com.mrbysco.ageingspawners.handler;
 
+import com.mrbysco.ageingspawners.AgeingSpawners;
 import com.mrbysco.ageingspawners.config.SpawnerConfig;
 import com.mrbysco.ageingspawners.util.AgeingHelper;
 import com.mrbysco.ageingspawners.util.AgeingWorldData;
@@ -26,7 +27,10 @@ public class AgeHandler {
 	@SubscribeEvent
 	public void SpawnEvent(LivingSpawnEvent.CheckSpawn event) {
 		if (!event.getWorld().isClientSide() && event.isSpawner() && event.getWorld() instanceof ServerLevelAccessor serverLevelAccessor) {
-			handleSpawner(serverLevelAccessor.getLevel(), event.getSpawner(), event.getEntity());
+			ServerLevel serverLevel = serverLevelAccessor.getLevel();
+			if (serverLevel.getGameRules().getBoolean(AgeingSpawners.AGE_SPAWNERS_RULE)) {
+				handleSpawner(serverLevel, event.getSpawner(), event.getEntity());
+			}
 		}
 	}
 
