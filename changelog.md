@@ -1,1 +1,1 @@
-* Initial 1.19.4 build
+* Add gamerule so the mod can be temporarily disabled
