@@ -86,7 +86,7 @@ public class AgeHandler {
 				SpawnerInfo info = locationMap.getOrDefault(pos, new SpawnerInfo(0, false));
 				boolean playerPlaced = info.playerPlaced();
 				boolean flag = SpawnerConfig.COMMON.playerPlacedOnly.get();
-				if (!flag || (flag && playerPlaced)) {
+				if (!flag || playerPlaced) {
 					int spawnCount = info.spawnCount();
 					spawnCount++;
 					if (spawnCount >= maxCount) {
