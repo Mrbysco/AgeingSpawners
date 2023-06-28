@@ -17,7 +17,7 @@ public class BaseSpawnerMixin {
 			index = 0)
 	public Entity ageingServerTick(Entity entity) {
 		if (!(entity instanceof Mob)) {
-			AgeHandler.handleSpawner(entity.level, (BaseSpawner) (Object) this, entity);
+			AgeHandler.handleSpawner(entity.level(), (BaseSpawner) (Object) this, entity);
 		}
 		return entity;
 	}

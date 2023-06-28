@@ -3,14 +3,14 @@
   "minVersion": "0.8.5",
   "compatibilityLevel": "JAVA_17",
   "package": "com.mrbysco.ageingspawners.mixin",
-  "refmap": "leashed.refmap.json",
+  "refmap": "ageingspawners.refmap.json",
   "target": "@env(DEFAULT)",
   "mixins": [
-	"BaseSpawnerMixin"
+    "BaseSpawnerMixin"
   ],
   "client": [
   ],
   "injectors": {
-	"defaultRequire": 1
+    "defaultRequire": 1
   }
 }

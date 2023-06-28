@@ -1,1 +1,1 @@
-* Add gamerule so the mod can be temporarily disabled
+* Initial update to 1.20
