@@ -1,1 +1,1 @@
-* Add gamerule so the mod can be temporarily disabled
+* Fix mixin refmap
