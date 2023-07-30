@@ -56,10 +56,8 @@ public class AgeHandler {
 			SpawnerSaveData data = SpawnerSaveData.getForWorld(DimensionManager.getWorld(0));
 			int dimension = event.getEntity().dimension;
 			HashMap<BlockPos, Integer> spawnerMap = data.getDimensionMap(dimension);
-			System.out.println(spawnerMap);
 			if(world.getTileEntity(spawnerPos) != null && world.getTileEntity(spawnerPos) instanceof TileEntityMobSpawner) {
 				int spawnCount = spawnerMap.getOrDefault(spawnerPos, 0);
-				System.out.println(SpawnerConfig.general.spawnerMode);
 				spawnCount++;
 				if(spawnCount >= maxCount) {
 					if(SpawnerConfig.general.spawnerMode != EnumAgeingMode.REGENERATE) {
@@ -75,7 +73,6 @@ public class AgeHandler {
 					data.markDirty();
 				}
 			}
-			System.out.println(data.getDimensionMap(dimension));
 		}
 	}
 
