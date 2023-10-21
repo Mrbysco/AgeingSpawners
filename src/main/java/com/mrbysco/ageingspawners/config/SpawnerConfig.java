@@ -1,6 +1,7 @@
 package com.mrbysco.ageingspawners.config;
 
 import com.mrbysco.ageingspawners.AgeingSpawners;
+import com.mrbysco.ageingspawners.util.AgeingHelper;
 import net.minecraftforge.common.ForgeConfigSpec;
 import net.minecraftforge.common.ForgeConfigSpec.BooleanValue;
 import net.minecraftforge.common.ForgeConfigSpec.ConfigValue;
@@ -85,10 +86,14 @@ public class SpawnerConfig {
 	@SubscribeEvent
 	public static void onLoad(final ModConfigEvent.Loading configEvent) {
 		AgeingSpawners.LOGGER.debug("Loaded Ageing Spawners' config file {}", configEvent.getConfig().getFileName());
+		AgeingHelper.blacklistCache.clear();
+		AgeingHelper.whitelistCache.clear();
 	}
 
 	@SubscribeEvent
 	public static void onFileChange(final ModConfigEvent.Reloading configEvent) {
 		AgeingSpawners.LOGGER.warn("Ageing Spawners' config just got changed on the file system!");
+		AgeingHelper.blacklistCache.clear();
+		AgeingHelper.whitelistCache.clear();
 	}
 }

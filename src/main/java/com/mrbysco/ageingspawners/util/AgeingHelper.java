@@ -4,37 +4,39 @@ import com.mrbysco.ageingspawners.config.SpawnerConfig;
 import net.minecraft.resources.ResourceLocation;
 import org.apache.commons.lang3.math.NumberUtils;
 
-import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class AgeingHelper {
+
+	public static final Map<String, Boolean> blacklistCache = new HashMap<>();
+	public static final Map<String, Boolean> whitelistCache = new HashMap<>();
+
 	public static boolean blacklistContains(ResourceLocation registryName) {
-		List<? extends String> blacklist = SpawnerConfig.COMMON.blacklist.get();
-		List<ResourceLocation> blacklistList = new ArrayList<>();
-		for (String s : blacklist) {
-			if (!s.isEmpty()) {
-				blacklistList.add(new ResourceLocation(s));
-			}
-		}
-		return blacklistList.contains(registryName);
+		return blacklistCache.computeIfAbsent(registryName.toString(), (value) -> {
+			List<? extends String> blacklist = SpawnerConfig.COMMON.blacklist.get();
+			return blacklist.contains(value);
+		});
 	}
 
 	public static boolean whitelistContains(ResourceLocation registryName) {
-		List<? extends String> whitelist = SpawnerConfig.COMMON.whitelist.get();
-		List<ResourceLocation> whitelistList = new ArrayList<>();
-		for (String info : whitelist) {
-			if (!info.isEmpty()) {
-				if (info.contains(";")) {
-					String[] infoArray = info.split(";");
-					if (infoArray.length > 1) {
-						whitelistList.add(new ResourceLocation(infoArray[0]));
+		return whitelistCache.computeIfAbsent(registryName.toString(), (value) -> {
+			List<? extends String> whitelist = SpawnerConfig.COMMON.whitelist.get();
+			List<String> whitelistList = whitelist.stream().map(info -> {
+				if (!info.isEmpty()) {
+					if (info.contains(";")) {
+						String[] infoArray = info.split(";");
+						if (infoArray.length > 1) {
+							return infoArray[0];
+						}
 					}
-				} else {
-					whitelistList.add(new ResourceLocation(info));
+					return info;
 				}
-			}
-		}
-		return whitelistList.contains(registryName);
+				return "";
+			}).filter(info -> !info.isEmpty()).toList();
+			return whitelistList.contains(value);
+		});
 	}
 
 	public static int getMaxSpawnCount(ResourceLocation registryName) {
