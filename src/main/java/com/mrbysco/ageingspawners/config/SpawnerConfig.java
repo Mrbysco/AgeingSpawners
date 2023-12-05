@@ -2,13 +2,11 @@ package com.mrbysco.ageingspawners.config;
 
 import com.mrbysco.ageingspawners.AgeingSpawners;
 import com.mrbysco.ageingspawners.util.AgeingHelper;
-import net.minecraftforge.common.ForgeConfigSpec;
-import net.minecraftforge.common.ForgeConfigSpec.BooleanValue;
-import net.minecraftforge.common.ForgeConfigSpec.ConfigValue;
-import net.minecraftforge.common.ForgeConfigSpec.EnumValue;
-import net.minecraftforge.common.ForgeConfigSpec.IntValue;
-import net.minecraftforge.eventbus.api.SubscribeEvent;
-import net.minecraftforge.fml.event.config.ModConfigEvent;
+import net.neoforged.neoforge.common.ModConfigSpec;
+import net.neoforged.neoforge.common.ModConfigSpec.BooleanValue;
+import net.neoforged.neoforge.common.ModConfigSpec.IntValue;
+import net.neoforged.bus.api.SubscribeEvent;
+import net.neoforged.fml.event.config.ModConfigEvent;
 import org.apache.commons.lang3.tuple.Pair;
 
 import java.util.Collections;
@@ -21,17 +19,17 @@ public class SpawnerConfig {
 	}
 
 	public static class Common {
-		public final EnumValue<EnumAgeingMode> spawnerMode;
+		public final ModConfigSpec.EnumValue<EnumAgeingMode> spawnerMode;
 		public final BooleanValue playerPlacedOnly;
 
 		public final IntValue whitelistMaxSpawnCount;
-		public final ConfigValue<List<? extends String>> whitelist;
+		public final ModConfigSpec.ConfigValue<List<? extends String>> whitelist;
 
 		public final IntValue blacklistMaxSpawnCount;
-		public final ConfigValue<List<? extends String>> blacklist;
+		public final ModConfigSpec.ConfigValue<List<? extends String>> blacklist;
 
 
-		Common(ForgeConfigSpec.Builder builder) {
+		Common(ModConfigSpec.Builder builder) {
 			builder.comment("General settings")
 					.push("General");
 
@@ -74,11 +72,11 @@ public class SpawnerConfig {
 		}
 	}
 
-	public static final ForgeConfigSpec commonSpec;
+	public static final ModConfigSpec commonSpec;
 	public static final Common COMMON;
 
 	static {
-		final Pair<Common, ForgeConfigSpec> specPair = new ForgeConfigSpec.Builder().configure(Common::new);
+		final Pair<Common, ModConfigSpec> specPair = new ModConfigSpec.Builder().configure(Common::new);
 		commonSpec = specPair.getRight();
 		COMMON = specPair.getLeft();
 	}

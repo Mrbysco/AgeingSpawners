@@ -97,7 +97,7 @@ public class AgeingWorldData extends SavedData {
 		ServerLevel overworld = level.getServer().getLevel(Level.OVERWORLD);
 
 		DimensionDataStorage storage = overworld.getDataStorage();
-		return storage.computeIfAbsent(AgeingWorldData::load, AgeingWorldData::new, DATA_NAME);
+		return storage.computeIfAbsent(new Factory<>(AgeingWorldData::new, AgeingWorldData::load), DATA_NAME);
 	}
 
 	public record SpawnerInfo(Integer spawnCount, boolean playerPlaced) {

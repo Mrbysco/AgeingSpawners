@@ -6,6 +6,7 @@ import com.mrbysco.ageingspawners.util.AgeingHelper;
 import com.mrbysco.ageingspawners.util.AgeingWorldData;
 import com.mrbysco.ageingspawners.util.AgeingWorldData.SpawnerInfo;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.entity.Entity;
@@ -15,11 +16,10 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.level.ServerLevelAccessor;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.entity.SpawnerBlockEntity;
-import net.minecraftforge.event.entity.living.MobSpawnEvent;
-import net.minecraftforge.event.level.BlockEvent.BreakEvent;
-import net.minecraftforge.event.level.BlockEvent.EntityPlaceEvent;
-import net.minecraftforge.eventbus.api.SubscribeEvent;
-import net.minecraftforge.registries.ForgeRegistries;
+import net.neoforged.bus.api.SubscribeEvent;
+import net.neoforged.neoforge.event.entity.living.MobSpawnEvent;
+import net.neoforged.neoforge.event.level.BlockEvent.BreakEvent;
+import net.neoforged.neoforge.event.level.BlockEvent.EntityPlaceEvent;
 
 import java.util.Map;
 
@@ -36,7 +36,7 @@ public class AgeHandler {
 	}
 
 	public static void handleSpawner(Level level, BaseSpawner spawner, Entity entity) {
-		ResourceLocation registryName = ForgeRegistries.ENTITY_TYPES.getKey(entity.getType());
+		ResourceLocation registryName = BuiltInRegistries.ENTITY_TYPE.getKey(entity.getType());
 		switch (SpawnerConfig.COMMON.spawnerMode.get()) {
 			case BLACKLIST -> handleBlacklist(level, spawner, registryName);
 			case WHITELIST -> handleWhitelist(level, spawner, registryName);
