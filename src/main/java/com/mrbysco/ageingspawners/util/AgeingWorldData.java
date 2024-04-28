@@ -2,6 +2,7 @@ package com.mrbysco.ageingspawners.util;
 
 import com.mrbysco.ageingspawners.AgeingSpawners;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
 import net.minecraft.nbt.Tag;
@@ -30,7 +31,7 @@ public class AgeingWorldData extends SavedData {
 		this(new HashMap<>());
 	}
 
-	public static AgeingWorldData load(CompoundTag compound) {
+	public static AgeingWorldData load(CompoundTag compound, HolderLookup.Provider provider) {
 		Map<ResourceLocation, Map<BlockPos, SpawnerInfo>> map = new HashMap<>();
 		for (String nbtName : compound.getAllKeys()) {
 			ListTag dimensionNBTList = new ListTag();
@@ -63,7 +64,7 @@ public class AgeingWorldData extends SavedData {
 	}
 
 	@Override
-	public CompoundTag save(CompoundTag compound) {
+	public CompoundTag save(CompoundTag compound, HolderLookup.Provider provider) {
 		for (Map.Entry<ResourceLocation, Map<BlockPos, SpawnerInfo>> dimensionEntry : worldSpawnerMap.entrySet()) {
 			ResourceLocation dimensionLocation = dimensionEntry.getKey();
 			Map<BlockPos, SpawnerInfo> savedPositions = dimensionEntry.getValue();
