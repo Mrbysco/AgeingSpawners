@@ -57,7 +57,7 @@ public class AgeingWorldData extends SavedData {
 						posMap.put(blockPos, new SpawnerInfo(amount, playerPlaced));
 					}
 				}
-				map.put(new ResourceLocation(nbtName), posMap);
+				map.put(ResourceLocation.tryParse(nbtName), posMap);
 			}
 		}
 		return new AgeingWorldData(map);

@@ -7,6 +7,7 @@ import org.apache.commons.lang3.math.NumberUtils;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 
 public class AgeingHelper {
 
@@ -45,7 +46,7 @@ public class AgeingHelper {
 			if (!info.isEmpty()) {
 				if (info.contains(";")) {
 					String[] infoArray = info.split(";");
-					if (infoArray.length > 1 && new ResourceLocation(infoArray[0]).equals(registryName)) {
+					if (infoArray.length > 1 && Objects.equals(ResourceLocation.tryParse(infoArray[0]), registryName)) {
 						return NumberUtils.toInt(infoArray[1]);
 					}
 				}
