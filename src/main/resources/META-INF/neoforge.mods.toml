@@ -21,7 +21,7 @@ side="BOTH"
 [[dependencies.ageingspawners]]
 modId="neoforge"
 type="REQUIRED"
-versionRange="[21.0.96-beta,)"
+versionRange="[21.0.110-beta,)"
 ordering="NONE"
 side="BOTH"
 [[mixins]]

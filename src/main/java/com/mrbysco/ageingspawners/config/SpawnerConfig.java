@@ -53,7 +53,7 @@ public class SpawnerConfig {
 					.comment("Decides which mobs age a spawner (requires spawnerMode to be set to WHITELIST)",
 							"[syntax: 'modid:entity;times' or 'modid:entity' ]",
 							"[example: 'minecraft:pig;5' ]")
-					.defineListAllowEmpty(Collections.singletonList("whitelist"), () -> Collections.singletonList(""), o -> (o instanceof String));
+					.defineListAllowEmpty("whitelist", () -> Collections.singletonList(""), String::new, o -> (o instanceof String));
 
 			builder.pop();
 			builder.comment("Blacklist settings")
@@ -66,7 +66,7 @@ public class SpawnerConfig {
 			blacklist = builder
 					.comment("Decides which mobs don't age a spawner (requires spawnerMode to be set to BLACKLIST) \n" +
 							"[syntax: 'modid:entity']")
-					.defineListAllowEmpty(Collections.singletonList("blacklist"), () -> Collections.singletonList(""), o -> (o instanceof String));
+					.defineListAllowEmpty("blacklist", () -> Collections.singletonList(""), String::new, o -> (o instanceof String));
 
 			builder.pop();
 		}
