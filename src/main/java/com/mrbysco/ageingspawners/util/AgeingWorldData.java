@@ -4,7 +4,7 @@ import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import com.mrbysco.ageingspawners.AgeingSpawners;
 import net.minecraft.core.BlockPos;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.saveddata.SavedData;
@@ -23,12 +23,12 @@ public class AgeingWorldData extends SavedData {
 	);
 
 	public static final Codec<AgeingWorldData> CODEC = RecordCodecBuilder.create(inst -> inst.group(
-					Codec.unboundedMap(ResourceLocation.CODEC, SPAWNER_MAP_CODEC).fieldOf("worldSpawnerMap").forGetter(data -> data.worldSpawnerMap))
+					Codec.unboundedMap(Identifier.CODEC, SPAWNER_MAP_CODEC).fieldOf("worldSpawnerMap").forGetter(data -> data.worldSpawnerMap))
 			.apply(inst, AgeingWorldData::new));
 
-	private final Map<ResourceLocation, Map<BlockPos, SpawnerInfo>> worldSpawnerMap = new HashMap<>();
+	private final Map<Identifier, Map<BlockPos, SpawnerInfo>> worldSpawnerMap = new HashMap<>();
 
-	public AgeingWorldData(Map<ResourceLocation, Map<BlockPos, SpawnerInfo>> map) {
+	public AgeingWorldData(Map<Identifier, Map<BlockPos, SpawnerInfo>> map) {
 		this.worldSpawnerMap.clear();
 		this.worldSpawnerMap.putAll(map);
 	}
@@ -37,11 +37,11 @@ public class AgeingWorldData extends SavedData {
 		this(new HashMap<>());
 	}
 
-	public Map<BlockPos, SpawnerInfo> getMapFromWorld(ResourceLocation dimensionLocation) {
+	public Map<BlockPos, SpawnerInfo> getMapFromWorld(Identifier dimensionLocation) {
 		return worldSpawnerMap.getOrDefault(dimensionLocation, new HashMap<>());
 	}
 
-	public void setMapForWorld(ResourceLocation dimensionLocation, Map<BlockPos, SpawnerInfo> spawnerInfoList) {
+	public void setMapForWorld(Identifier dimensionLocation, Map<BlockPos, SpawnerInfo> spawnerInfoList) {
 		worldSpawnerMap.put(dimensionLocation, spawnerInfoList);
 	}
 
