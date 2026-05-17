@@ -7,6 +7,7 @@ import com.mojang.serialization.Codec;
 import com.mrbysco.ageingspawners.config.SpawnerConfig;
 import com.mrbysco.ageingspawners.handler.AgeHandler;
 import net.minecraft.core.registries.Registries;
+import net.minecraft.resources.Identifier;
 import net.minecraft.world.flag.FeatureFlagSet;
 import net.minecraft.world.level.gamerules.GameRule;
 import net.minecraft.world.level.gamerules.GameRuleCategory;
@@ -55,5 +56,9 @@ public class AgeingSpawners {
 
 	private static <T> DeferredHolder<GameRule<?>, GameRule<T>> register(String name, GameRuleCategory category, GameRuleType gameRuleType, ArgumentType<T> argument, Codec<T> valueCodec, T defaultValue, FeatureFlagSet requiredFeatures, GameRules.VisitorCaller<T> visitorCaller, ToIntFunction<T> commandResultFunction) {
 		return GAME_RULES.register(name, () -> new GameRule<>(category, gameRuleType, argument, visitorCaller, valueCodec, commandResultFunction, defaultValue, requiredFeatures));
+	}
+
+	public static Identifier modLoc(String path) {
+		return Identifier.fromNamespaceAndPath(MOD_ID, path);
 	}
 }

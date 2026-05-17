@@ -9,13 +9,13 @@ import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.saveddata.SavedData;
 import net.minecraft.world.level.saveddata.SavedDataType;
-import net.minecraft.world.level.storage.DimensionDataStorage;
+import net.minecraft.world.level.storage.SavedDataStorage;
 
 import java.util.HashMap;
 import java.util.Map;
 
 public class AgeingWorldData extends SavedData {
-	private static final String DATA_NAME = AgeingSpawners.MOD_ID + "_world_data";
+	private static final Identifier DATA_NAME = AgeingSpawners.modLoc("world_data");
 
 	private static final Codec<Map<BlockPos, SpawnerInfo>> SPAWNER_MAP_CODEC = Codec.unboundedMap(
 			BlockPos.CODEC,
@@ -56,7 +56,7 @@ public class AgeingWorldData extends SavedData {
 		ServerLevel overworld = level.getServer().getLevel(Level.OVERWORLD);
 
 		assert overworld != null;
-		DimensionDataStorage storage = overworld.getDataStorage();
+		SavedDataStorage storage = overworld.getDataStorage();
 		return storage.computeIfAbsent(type());
 	}
 

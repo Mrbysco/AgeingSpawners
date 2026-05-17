@@ -19,8 +19,8 @@ import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.entity.SpawnerBlockEntity;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.neoforge.event.entity.living.FinalizeSpawnEvent;
-import net.neoforged.neoforge.event.level.BlockEvent.BreakEvent;
 import net.neoforged.neoforge.event.level.BlockEvent.EntityPlaceEvent;
+import net.neoforged.neoforge.event.level.block.BreakBlockEvent;
 
 import java.util.Map;
 
@@ -121,7 +121,7 @@ public class AgeHandler {
 	}
 
 	@SubscribeEvent
-	public void breakEvent(BreakEvent event) {
+	public void breakEvent(BreakBlockEvent event) {
 		if (!event.getLevel().isClientSide() && event.getLevel() instanceof ServerLevelAccessor serverLevelAccessor) {
 			BlockPos pos = event.getPos();
 			ServerLevel serverLevel = serverLevelAccessor.getLevel();
