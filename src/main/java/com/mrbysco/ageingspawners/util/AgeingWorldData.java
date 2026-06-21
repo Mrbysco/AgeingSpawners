@@ -29,7 +29,6 @@ public class AgeingWorldData extends SavedData {
 	private final Map<Identifier, Map<BlockPos, SpawnerInfo>> worldSpawnerMap = new HashMap<>();
 
 	public AgeingWorldData(Map<Identifier, Map<BlockPos, SpawnerInfo>> map) {
-		this.worldSpawnerMap.clear();
 		this.worldSpawnerMap.putAll(map);
 	}
 

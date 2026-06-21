@@ -23,7 +23,7 @@ public abstract class BaseSpawnerMixin {
 					value = "INVOKE",
 					target = "Lnet/minecraft/server/level/ServerLevel;tryAddFreshEntityWithPassengers(Lnet/minecraft/world/entity/Entity;)Z"),
 			index = 0)
-	public Entity ageingServerTick(Entity entity) {
+	public Entity ageingspawners$serverTick(Entity entity) {
 		if (!(entity instanceof Mob)) {
 			AgeHandler.handleSpawner(entity.level(), getOwner(), entity);
 		}
