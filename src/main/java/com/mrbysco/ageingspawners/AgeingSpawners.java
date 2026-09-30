@@ -38,7 +38,7 @@ public class AgeingSpawners {
 	public static final DeferredHolder<GameRule<?>, GameRule<Boolean>> AGE_SPAWNERS_RULE = registerBoolean("ageing_spawners", GameRuleCategory.UPDATES, true);
 
 	public AgeingSpawners(IEventBus eventBus, Dist dist, ModContainer container) {
-		container.registerConfig(ModConfig.Type.COMMON, SpawnerConfig.commonSpec);
+		container.registerConfig(ModConfig.Type.LOCAL, SpawnerConfig.commonSpec);
 		eventBus.register(SpawnerConfig.class);
 
 		GAME_RULES.register(eventBus);
