@@ -21,6 +21,7 @@ public class SpawnerConfig {
 	public static class Common {
 		public final ModConfigSpec.EnumValue<EnumAgeingMode> spawnerMode;
 		public final BooleanValue playerPlacedOnly;
+		public final BooleanValue onlyCountKilled;
 
 		public final IntValue whitelistMaxSpawnCount;
 		public final ModConfigSpec.ConfigValue<List<? extends String>> whitelist;
@@ -40,6 +41,10 @@ public class SpawnerConfig {
 			playerPlacedOnly = builder
 					.comment("Decides whether only player placed spawners age [Default: false]")
 					.define("playerPlacedOnly", false);
+
+			onlyCountKilled = builder
+					.comment("Decides whether only killed mobs count towards spawner aging [Default: true]")
+					.define("onlyCountKilled", true);
 
 			builder.pop();
 			builder.comment("Whitelist settings")
